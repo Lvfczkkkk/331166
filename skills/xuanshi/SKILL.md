@@ -1,6 +1,6 @@
-# 玄学大狮 AI版 (XuanShi AI)
+# Mystic Master (玄学大狮) 🧙‍♂️
 
-_知命不认命，AI 伴你行 · 智能玄学助手_
+_AI-Powered Chinese Divination & Destiny Analysis_
 
 基于 AI 大模型的智能玄学助手，为你提供八字分析、易经占卜、运势预测等服务。
 
@@ -227,7 +227,7 @@ AI：📅 为您查看今日运势...
 
 ---
 
-**AI 驱动 · 趣味体验 · 文化传承** 🔮
+**AI-Powered · Culturally Authentic · Enlightening Experience** 🧙‍♂️
 
 **Product Manager & Developer**: K哥  
 **Version**: 1.0.0-AI  
