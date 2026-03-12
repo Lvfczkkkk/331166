@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FateClaw</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-dark: #1a0f0a;
+            --bg-card: #2d1f16;
+            --gold: #d4af37;
+            --gold-light: #f4d03f;
+            --text: #f5e6d3;
+            --text-secondary: #b8a088;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            width: 375px;
+            height: 667px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 手机外壳 */
+        .phone-frame {
+            width: 375px;
+            height: 667px;
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .time { color: var(--gold); }
+        .icons { display: flex; gap: 5px; }
+        .icon { width: 16px; height: 16px; background: var(--gold); border-radius: 3px; }
+
+        /* 主界面 */
+        .app-container {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 16px 20px;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            border-radius: 20px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .app-name {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .app-tagline {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 快捷功能 */
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .quick-btn {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 16px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:active {
+            transform: scale(0.95);
+            background: rgba(212, 175, 55, 0.3);
+        }
+
+        .quick-btn .icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .quick-btn .label {
+            font-size: 13px;
+            color: var(--gold);
+        }
+
+        /* 功能列表 */
+        .feature-list {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-item:active {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 12px;
+        }
+
+        .feature-info {
+            flex: 1;
+        }
+
+        .feature-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .feature-arrow {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        /* 今日运势卡片 */
+        .fortune-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .fortune-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .fortune-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .fortune-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .fortune-score {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: var(--gold);
+        }
+
+        .fortune-items {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .fortune-item {
+            text-align: center;
+        }
+
+        .fortune-item .stars {
+            color: var(--gold);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .fortune-item .label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* 底部导航 */
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 84px;
+            background: rgba(26, 15, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+
+        .tab-item.active .tab-icon {
+            color: var(--gold);
+        }
+
+        .tab-item.active .tab-label {
+            color: var(--gold);
+        }
+
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+
+        .tab-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        /* 页面切换 */
+        .page {
+            display: none;
+            height: calc(100% - 84px);
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* 八字页面 */
+        .page-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* 输入框 */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 48px;
+            background: var(--bg-card);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 0 16px;
+            color: var(--text);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--gold);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-row .input-group {
+            flex: 1;
+        }
+
+        /* 按钮 */
+        .btn-primary {
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-dark);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* 结果页面 */
+        .result-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--gold);
+        }
+
+        .result-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .result-content strong {
+            color: var(--text);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="phone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <span class="time">16:09</span>
+                <div class="icons">
+                    <div class="icon"></div>
+                    <div class="icon"></div>
+                    <div class="icon"></div>
+                </div>
+            </div>
+
+            <!-- 首页 -->
+            <div id="home-page" class="app-container">
+                <!-- 头部 -->
+                <div class="header">
+                    <div class="logo-icon">🔮</div>
+                    <div class="app-name">FateClaw</div>
+                    <div class="app-tagline">智能玄学助手 · 知命不认命</div>
+                </div>
+
+                <!-- 今日运势卡片 -->
+                <div class="fortune-card">
+                    <div class="fortune-header">
+                        <span class="fortune-title">📅 今日运势</span>
+                        <span class="fortune-date">3月12日 周四</span>
+                    </div>
+                    <div class="fortune-score">
+                        <div class="score-number">82</div>
+                        <div class="score-label">大吉</div>
+                    </div>
+                    <div class="fortune-items">
+                        <div class="fortune-item">
+                            <div class="stars">★★★★★</div>
+                            <div class="label">事业</div>
+                        </div>
+                        <div class="fortune-item">
+                            <div class="stars">★★★★☆</div>
+                            <div class="label">财运</div>
+                        </div>
+                        <div class="fortune-item">
+                            <div class="stars">★★★☆☆</div>
+                            <div class="label">感情</div>
+                        </div>
+                        <div class="fortune-item">
+                            <div class="stars">★★★★☆</div>
+                            <div class="label">健康</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷功能 -->
+                <div class="quick-actions">
+                    <div class="quick-btn" onclick="showPage('bazi-page')">
+                        <div class="icon">🔮</div>
+                        <div class="label">八字</div>
+                    </div>
+                    <div class="quick-btn" onclick="showPage('divination-page')">
+                        <div class="icon">🎴</div>
+                        <div class="label">占卜</div>
+                    </div>
+                    <div class="quick-btn" onclick="showPage('fortune-page')">
+                        <div class="icon">📅</div>
+                        <div class="label">运势</div>
+                    </div>
+                </div>
+
+                <!-- 功能列表 -->
+                <div class="feature-list">
+                    <div class="feature-item" onclick="showPage('bazi-page')">
+                        <div class="feature-icon">🔮</div>
+                        <div class="feature-info">
+                            <div class="feature-name">八字精批</div>
+                            <div class="feature-desc">排出四柱八字，分析五行强弱</div>
+                        </div>
+                        <div class="feature-arrow">›</div>
+                    </div>
+                    <div class="feature-item" onclick="showPage('divination-page')">
+                        <div class="feature-icon">🎴</div>
+                        <div class="feature-info">
+                            <div class="feature-name">易经占卜</div>
+                            <div class="feature-desc">随机起卦，解读六十四卦象</div>
+                        </div>
+                        <div class="feature-arrow">›</div>
+                    </div>
+                    <div class="feature-item" onclick="showPage('fortune-page')">
+                        <div class="feature-icon">📅</div>
+                        <div class="feature-info">
+                            <div class="feature-name">每日运势</div>
+                            <div class="feature-desc">生肖运势，幸运提示</div>
+                        </div>
+                        <div class="feature-arrow">›</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🏠</div>
+                        <div class="feature-info">
+                            <div class="feature-name">风水建议</div>
+                            <div class="feature-desc">房间布局，方位指导</div>
+                        </div>
+                        <div class="feature-arrow">›</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📝</div>
+                        <div class="feature-info">
+                            <div class="feature-name">姓名分析</div>
+                            <div class="feature-desc">五格数理，吉凶解读</div>
+                        </div>
+                        <div class="feature-arrow">›</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💕</div>
+                        <div class="feature-info">
+                            <div class="feature-name">八字合婚</div>
+                            <div class="feature-desc">匹配度分析，婚姻建议</div>
+                        </div>
+                        <div class="feature-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 八字页面 -->
+            <div id="bazi-page" class="page">
+                <div class="page-header">
+                    <div class="back-btn" onclick="showPage('home-page')">‹</div>
+                    <div class="page-title">八字精批</div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="input-label">出生年</label>
+                        <input type="number" class="input-field" placeholder="1990" id="bazi-year">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">月</label>
+                        <input type="number" class="input-field" placeholder="5" id="bazi-month">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">日</label>
+                        <input type="number" class="input-field" placeholder="15" id="bazi-day">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="input-label">时辰</label>
+                        <input type="number" class="input-field" placeholder="14" id="bazi-hour">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">性别</label>
+                        <select class="input-field" id="bazi-gender">
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="analyzeBazi()">开始分析</button>
+
+                <div id="bazi-result" style="display: none; margin-top: 20px;">
+                    <div class="result-card">
+                        <div class="result-title">🔮 测算结果</div>
+                        <div class="result-content" id="bazi-result-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 占卜页面 -->
+            <div id="divination-page" class="page">
+                <div class="page-header">
+                    <div class="back-btn" onclick="showPage('home-page')">‹</div>
+                    <div class="page-title">易经占卜</div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">心中默念所问之事</label>
+                    <textarea class="input-field" style="height: 100px; padding: 12px;" placeholder="例如：今年创业能否成功？" id="divination-question"></textarea>
+                </div>
+
+                <button class="btn-primary" onclick="divinate()">开始占卜</button>
+
+                <div id="divination-result" style="display: none; margin-top: 20px;">
+                    <div class="result-card">
+                        <div class="result-title">🎴 卦象解读</div>
+                        <div class="result-content" id="divination-result-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 运势页面 -->
+            <div id="fortune-page" class="page">
+                <div class="page-header">
+                    <div class="back-btn" onclick="showPage('home-page')">‹</div>
+                    <div class="page-title">每日运势</div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">选择生肖</label>
+                    <select class="input-field" id="fortune-zodiac">
+                        <option value="鼠">🐭 鼠</option>
+                        <option value="牛">🐮 牛</option>
+                        <option value="虎">🐯 虎</option>
+                        <option value="兔">🐰 兔</option>
+                        <option value="龙">🐲 龙</option>
+                        <option value="蛇">🐍 蛇</option>
+                        <option value="马">🐴 马</option>
+                        <option value="羊">🐑 羊</option>
+                        <option value="猴">🐵 猴</option>
+                        <option value="鸡">🐔 鸡</option>
+                        <option value="狗">🐕 狗</option>
+                        <option value="猪">🐷 猪</option>
+                    </select>
+                </div>
+
+                <button class="btn-primary" onclick="checkFortune()">查看运势</button>
+
+                <div id="fortune-result" style="display: none; margin-top: 20px;">
+                    <div class="result-card">
+                        <div class="result-title">📅 运势详解</div>
+                        <div class="result-content" id="fortune-result-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部导航 -->
+            <div class="tab-bar">
+                <div class="tab-item active" onclick="showPage('home-page')">
+                    <div class="tab-icon">🏠</div>
+                    <div class="tab-label">首页</div>
+                </div>
+                <div class="tab-item" onclick="showPage('bazi-page')">
+                    <div class="tab-icon">🔮</div>
+                    <div class="tab-label">八字</div>
+                </div>
+                <div class="tab-item" onclick="showPage('divination-page')">
+                    <div class="tab-icon">🎴</div>
+                    <div class="tab-label">占卜</div>
+                </div>
+                <div class="tab-item" onclick="showPage('fortune-page')">
+                    <div class="tab-icon">📅</div>
+                    <div class="tab-label">运势</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page, .app-container').forEach(page => {
+                page.classList.remove('active');
+                if (page.classList.contains('app-container')) {
+                    page.style.display = 'none';
+                }
+            });
+
+            // 显示目标页面
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                if (targetPage.classList.contains('app-container')) {
+                    targetPage.style.display = 'block';
+                }
+            }
+
+            // 更新底部导航
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // 根据页面激活对应导航
+            const tabMap = {
+                'home-page': 0,
+                'bazi-page': 1,
+                'divination-page': 2,
+                'fortune-page': 3
+            };
+
+            const tabIndex = tabMap[pageId];
+            if (tabIndex !== undefined) {
+                document.querySelectorAll('.tab-item')[tabIndex].classList.add('active');
+            }
+        }
+
+        // 八字分析
+        function analyzeBazi() {
+            const year = document.getElementById('bazi-year').value || '1990';
+            const month = document.getElementById('bazi-month').value || '5';
+            const day = document.getElementById('bazi-day').value || '15';
+            const hour = document.getElementById('bazi-hour').value || '14';
+            const gender = document.getElementById('bazi-gender').value;
+
+            const result = `【四柱八字】
+年柱：庚午
+月柱：己卯  
+日柱：壬戌
+时柱：辛未
+
+【五行分析】
+金：★★★☆☆
+木：★★☆☆☆
+水：★★★★☆
+火：★★★☆☆
+土：★★☆☆☆
+
+【性格特点】
+聪明机智，适应力强，有领导才能。
+性格温和但有自己的主见。
+
+【事业建议】
+适合行业：教育、文化、艺术、咨询
+发展方向：往北方发展较佳
+
+【开运建议】
+🧭 幸运方位：北方、东方
+🎨 幸运颜色：黑色、绿色
+🔢 幸运数字：1、6、3、8`;
+
+            document.getElementById('bazi-result-content').innerText = result;
+            document.getElementById('bazi-result').style.display = 'block';
+        }
+
+        // 易经占卜
+        function divinate() {
+            const question = document.getElementById('divination-question').value || '今年运势如何？';
+
+            const result = `【您的问题】
+${question}
+
+【本卦】火天大有
+
+【卦象解读】
+此卦象征光明盛大、事业亨通。
+火在天上，普照万物。
+
+【建议】
+✅ 此事可行，前景光明
+⚠️ 但需注意防范小人
+📅 最佳时机：农历五月
+💡 保持信心，必将成功！`;
+
+            document.getElementById('divination-result-content').innerText = result;
+            document.getElementById('divination-result').style.display = 'block';
+        }
+
+        // 查看运势
+        function checkFortune() {
+            const zodiac = document.getElementById('fortune-zodiac').value;
+
+            const result = `【${zodiac}年生肖今日运势】
+
+整体：★★★★☆ 82分
+
+【分项运势】
+事业：★★★★★ 贵人相助
+财运：★★★★☆ 正财稳定
+感情：★★★☆☆ 保持现状
+健康：★★★★☆ 精神饱满
+
+【幸运提示】
+🧭 方位：东南、正南
+🎨 颜色：红色、紫色
+🔢 数字：3、8、5
+
+【宜忌】
+✅ 宜：签约、谈判、求财
+❌ 忌：搬家、装修`;
+
+            document.getElementById('fortune-result-content').innerText = result;
+            document.getElementById('fortune-result').style.display = 'block';
+        }
+
+        // 更新时间
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.querySelector('.time').textContent = `${hours}:${minutes}`;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>
