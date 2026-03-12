@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FateClaw - 智能玄学助手</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8B4513;
+            --primary-light: #D2691E;
+            --secondary: #FFD700;
+            --dark: #2C1810;
+            --light: #FFF8DC;
+            --gradient: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #FFD700 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--dark);
+            min-height: 100vh;
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        /* 背景动画 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(139, 69, 19, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 215, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(210, 105, 30, 0.2) 0%, transparent 70%);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, rgba(255,215,0,0.8), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,215,0,0.6), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,215,0,0.9), transparent),
+                radial-gradient(2px 2px at 160px 120px, rgba(255,215,0,0.7), transparent),
+                radial-gradient(1px 1px at 230px 80px, rgba(255,215,0,0.8), transparent);
+            background-repeat: repeat;
+            background-size: 250px 150px;
+            animation: twinkle 5s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* 头部 */
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: rgba(255, 248, 220, 0.8);
+            letter-spacing: 3px;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* 功能卡片网格 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(139, 69, 19, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2);
+            border-color: var(--secondary);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: rgba(255, 248, 220, 0.7);
+            line-height: 1.6;
+        }
+
+        /* 输入区域 */
+        .input-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 3rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .input-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.8rem;
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 248, 220, 0.9);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .btn {
+            background: var(--gradient);
+            color: var(--dark);
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 2rem auto 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        /* 结果区域 */
+        .result-section {
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 3rem;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            display: none;
+        }
+
+        .result-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-content {
+            font-family: 'Noto Serif SC', serif;
+            line-height: 2;
+            white-space: pre-line;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            color: rgba(255, 248, 220, 0.6);
+        }
+
+        .disclaimer {
+            font-size: 0.9rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .input-section,
+            .result-section {
+                padding: 1.5rem;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-top-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="stars"></div>
+
+    <header>
+        <h1 class="logo">FateClaw</h1>
+        <p class="tagline">智能玄学助手 · 知命不认命</p>
+    </header>
+
+    <div class="container">
+        <!-- 功能选择 -->
+        <div class="features-grid">
+            <div class="feature-card" onclick="showBaziForm()">
+                <div class="feature-icon">🔮</div>
+                <h3 class="feature-title">八字精批</h3>
+                <p class="feature-desc">根据出生时间排出四柱八字，分析五行强弱、十神关系，解读性格与运势</p>
+            </div>
+
+            <div class="feature-card" onclick="showYijingForm()">
+                <div class="feature-icon">🎴</div>
+                <h3 class="feature-title">易经占卜</h3>
+                <p class="feature-desc">心中默念所问之事，随机起卦，解读六十四卦象，预测吉凶祸福</p>
+            </div>
+
+            <div class="feature-card" onclick="showFortuneForm()">
+                <div class="feature-icon">📅</div>
+                <h3 class="feature-title">今日运势</h3>
+                <p class="feature-desc">根据生肖和日期，提供个性化运势指南、幸运提示和宜忌事项</p>
+            </div>
+
+            <div class="feature-card" onclick="showFengshuiForm()">
+                <div class="feature-icon">🏠</div>
+                <h3 class="feature-title">风水建议</h3>
+                <p class="feature-desc">根据房间布局和方位，提供简易风水布局建议</p>
+            </div>
+
+            <div class="feature-card" onclick="showNameForm()">
+                <div class="feature-icon">📝</div>
+                <h3 class="feature-title">姓名分析</h3>
+                <p class="feature-desc">分析姓名笔画数理，解读五格配置和吉凶</p>
+            </div>
+
+            <div class="feature-card" onclick="showHelunForm()">
+                <div class="feature-icon">💕</div>
+                <h3 class="feature-title">八字合婚</h3>
+                <p class="feature-desc">双方八字匹配度分析，婚姻建议和最佳结婚时间</p>
+            </div>
+        </div>
+
+        <!-- 八字表单 -->
+        <div id="bazi-form" class="input-section" style="display: none;">
+            <h2 class="input-title">🔮 八字精批</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">出生年</label>
+                    <input type="number" class="form-input" id="bazi-year" placeholder="如：1990" min="1900" max="2100">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生月</label>
+                    <input type="number" class="form-input" id="bazi-month" placeholder="如：5" min="1" max="12">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生日</label>
+                    <input type="number" class="form-input" id="bazi-day" placeholder="如：15" min="1" max="31">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">出生时辰</label>
+                    <input type="number" class="form-input" id="bazi-hour" placeholder="如：14" min="0" max="23">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">性别</label>
+                <select class="form-input" id="bazi-gender">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </div>
+            <button class="btn" onclick="analyzeBazi()">开始分析</button>
+        </div>
+
+        <!-- 占卜表单 -->
+        <div id="yijing-form" class="input-section" style="display: none;">
+            <h2 class="input-title">🎴 易经占卜</h2>
+            <div class="form-group">
+                <label class="form-label">所问之事（越具体越好）</label>
+                <textarea class="form-input" id="yijing-question" rows="4" placeholder="例如：今年创业能否成功？和TA的感情发展如何？"></textarea>
+            </div>
+            <button class="btn" onclick="divinate()">开始占卜</button>
+        </div>
+
+        <!-- 运势表单 -->
+        <div id="fortune-form" class="input-section" style="display: none;">
+            <h2 class="input-title">📅 今日运势</h2>
+            <div class="form-group">
+                <label class="form-label">生肖</label>
+                <select class="form-input" id="fortune-zodiac">
+                    <option value="鼠">鼠</option>
+                    <option value="牛">牛</option>
+                    <option value="虎">虎</option>
+                    <option value="兔">兔</option>
+                    <option value="龙">龙</option>
+                    <option value="蛇">蛇</option>
+                    <option value="马">马</option>
+                    <option value="羊">羊</option>
+                    <option value="猴">猴</option>
+                    <option value="鸡">鸡</option>
+                    <option value="狗">狗</option>
+                    <option value="猪">猪</option>
+                </select>
+            </div>
+            <button class="btn" onclick="checkFortune()">查看运势</button>
+        </div>
+
+        <!-- 加载中 -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>正在测算中，请稍候...</p>
+        </div>
+
+        <!-- 结果区域 -->
+        <div id="result" class="result-section">
+            <h2 class="input-title">📜 测算结果</h2>
+            <div class="result-content" id="result-content"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p class="disclaimer">
+            免责声明：本工具基于AI技术生成内容，仅供娱乐参考和文化学习，不构成任何专业建议。
+            人生重大决策请以理性分析和专业意见为准。请理性看待测算结果，切勿过度迷信。
+        </p>
+        <p style="margin-top: 1rem;">© 2026 FateClaw | Powered by OpenClaw</p>
+    </footer>
+
+    <script>
+        // 显示表单
+        function hideAllForms() {
+            document.getElementById('bazi-form').style.display = 'none';
+            document.getElementById('yijing-form').style.display = 'none';
+            document.getElementById('fortune-form').style.display = 'none';
+            document.getElementById('result').classList.remove('active');
+        }
+
+        function showBaziForm() {
+            hideAllForms();
+            document.getElementById('bazi-form').style.display = 'block';
+            document.getElementById('bazi-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showYijingForm() {
+            hideAllForms();
+            document.getElementById('yijing-form').style.display = 'block';
+            document.getElementById('yijing-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showFortuneForm() {
+            hideAllForms();
+            document.getElementById('fortune-form').style.display = 'block';
+            document.getElementById('fortune-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showFengshuiForm() {
+            alert('风水建议功能开发中，敬请期待！');
+        }
+
+        function showNameForm() {
+            alert('姓名分析功能开发中，敬请期待！');
+        }
+
+        function showHelunForm() {
+            alert('八字合婚功能开发中，敬请期待！');
+        }
+
+        // 八字分析
+        function analyzeBazi() {
+            const year = document.getElementById('bazi-year').value;
+            const month = document.getElementById('bazi-month').value;
+            const day = document.getElementById('bazi-day').value;
+            const hour = document.getElementById('bazi-hour').value;
+            const gender = document.getElementById('bazi-gender').value;
+
+            if (!year || !month || !day || !hour) {
+                alert('请填写完整的出生信息');
+                return;
+            }
+
+            showLoading();
+
+            // 模拟AI响应
+            setTimeout(() => {
+                const result = generateBaziResult(year, month, day, hour, gender);
+                showResult(result);
+            }, 2000);
+        }
+
+        // 生成八字结果
+        function generateBaziResult(year, month, day, hour, gender) {
+            const gan = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+            const zhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+            
+            // 简单计算（实际应用需要复杂的历法计算）
+            const yearGan = gan[(year - 4) % 10];
+            const yearZhi = zhi[(year - 4) % 12];
+            const monthGan = gan[(year % 5 * 2 + month) % 10];
+            const monthZhi = zhi[(month + 1) % 12];
+            const dayGan = gan[Math.floor((new Date(year, month-1, day).getTime() / 86400000 + 9) % 10)];
+            const dayZhi = zhi[Math.floor((new Date(year, month-1, day).getTime() / 86400000 + 9) % 12)];
+            const hourGan = gan[(dayGan.charCodeAt(0) - 19968) % 5 * 2 + Math.floor(hour / 2) % 10];
+            const hourZhi = zhi[Math.floor(hour / 2) % 12];
+
+            return `🔮 八字精批结果
+
+【四柱八字】
+年柱：${yearGan}${yearZhi}
+月柱：${monthGan}${monthZhi}
+日柱：${dayGan}${dayZhi} ← 日主
+时柱：${hourGan}${hourZhi}
+
+【五行分析】
+金：★★★☆☆ 适中
+木：★★☆☆☆ 偏弱
+水：★★★★☆ 旺
+火：★★★☆☆ 适中
+土：★★☆☆☆ 偏弱
+
+【日主分析】
+日主${dayGan}，生于${month}月，${gender}命。
+整体五行较为平衡，水木相生，利于智慧发展。
+
+【性格特点】
+聪明机智，适应力强，有领导才能。
+性格温和但有自己的主见，善于沟通协调。
+重视精神生活，有艺术天赋。
+
+【事业建议】
+适合行业：教育、文化、艺术、咨询、互联网
+发展方向：适合需要创造力和沟通能力的工作
+贵人运：30岁后贵人运渐佳
+
+【财运分析】
+正财运稳定，偏财运一般。
+建议稳健理财，不宜冒险投资。
+37-47岁财运最佳。
+
+【感情建议】
+异性缘不错，感情丰富。
+适合配偶：性格温和、有共同兴趣的人
+相处之道：多沟通，互相理解包容
+
+【开运建议】
+🧭 幸运方位：北方、东方
+🎨 幸运颜色：黑色、绿色
+🔢 幸运数字：1、6、3、8
+✨ 宜佩戴：水晶、木质饰品
+
+【总结】
+您的八字整体较为平衡，未来运势平稳上升。
+建议保持积极心态，把握机遇，必能有所成就。
+
+⚠️ 本结果仅供参考，人生掌握在自己手中。`;
+        }
+
+        // 易经占卜
+        function divinate() {
+            const question = document.getElementById('yijing-question').value;
+            if (!question) {
+                alert('请输入您想问的事情');
+                return;
+            }
+
+            showLoading();
+
+            setTimeout(() => {
+                const result = generateYijingResult(question);
+                showResult(result);
+            }, 2000);
+        }
+
+        // 生成占卜结果
+        function generateYijingResult(question) {
+            const guaNames = ['乾为天', '坤为地', '水雷屯', '山水蒙', '水天需', '天水讼', '地水师', '水地比', 
+                '风天小畜', '天泽履', '地天泰', '天地否', '天火同人', '火天大有', '地山谦', '雷地豫'];
+            const gua = guaNames[Math.floor(Math.random() * guaNames.length)];
+            
+            return `🎴 易经占卜结果
+
+【您的问题】
+${question}
+
+【本卦】${gua}
+
+【卦象解读】
+此卦象征变化与机遇并存。当前处境虽有挑战，但暗藏转机。
+
+【针对您的问题】
+✅ 有利因素：
+- 时机正在好转，机会即将出现
+- 贵人暗中相助，不必过于担忧
+- 坚持下去会有好结果
+
+⚠️ 需要注意：
+- 过程中可能有小波折，保持耐心
+- 避免急躁冒进，稳扎稳打为上
+- 注意身边小人，谨慎交友
+
+📅 最佳时机：
+农历${Math.floor(Math.random() * 12) + 1}月运势转佳
+
+💡 行动建议：
+1. 保持积极心态，相信自己的能力
+2. 做好准备，机会来临时能抓住
+3. 多与贵人交流，寻求建议
+4. 避免冲动决策，三思而后行
+
+【总结】
+吉。此事可行，但需要耐心和智慧。
+保持信心，必将成功！🙏
+
+⚠️ 本结果仅供参考，最终决定权在您手中。`;
+        }
+
+        // 查看运势
+        function checkFortune() {
+            const zodiac = document.getElementById('fortune-zodiac').value;
+            showLoading();
+
+            setTimeout(() => {
+                const result = generateFortuneResult(zodiac);
+                showResult(result);
+            }, 1500);
+        }
+
+        // 生成运势结果
+        function generateFortuneResult(zodiac) {
+            const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+            const score = Math.floor(Math.random() * 30) + 70; // 70-100分
+            
+            return `📅 ${zodiac}年生肖今日运势
+
+【${today}】
+
+【整体运势】★★★★☆ ${score}分 【吉】
+今日运势不错，适合主动出击，把握机会！
+
+【分项运势】
+事业：★★★★★ ${Math.min(100, score + 5)}分 - 工作顺利，上司赏识，适合争取资源
+财运：★★★★☆ ${Math.min(100, score + 3)}分 - 正财稳定，有意外之喜
+感情：★★★☆☆ ${Math.max(60, score - 10)}分 - 异性缘一般，宜多沟通
+健康：★★★★☆ ${Math.min(100, score - 2)}分 - 精神饱满，注意肠胃
+
+【幸运提示】
+🧭 幸运方位：东南、正南
+🎨 幸运颜色：红色、紫色
+🔢 幸运数字：3、8、5
+🐲 贵人属相：鼠、猴、龙
+✨ 幸运物品：红绳、水晶
+
+【宜忌】
+✅ 宜：签约、谈判、求财、出行、社交
+❌ 忌：搬家、装修、大额投资
+
+【时辰运势】
+09:00-11:00 ⭐⭐⭐⭐⭐ 最佳时段
+13:00-15:00 ⭐⭐⭐⭐ 财运佳
+15:00-17:00 ⭐⭐⭐ 宜休息
+
+【建议】
+今天是适合行动的好日子，重要事项可安排在上午进行。
+保持积极心态，好运自然来！
+
+⚠️ 本运势仅供参考，请理性看待。`;
+        }
+
+        // 显示加载
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('result').classList.remove('active');
+        }
+
+        // 显示结果
+        function showResult(content) {
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('result-content').textContent = content;
+            document.getElementById('result').classList.add('active');
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
