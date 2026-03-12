@@ -1,7 +1,7 @@
 {
   "name": "FateClaw (玄学大狮)",
   "id": "fateclaw",
-  "version": "1.1.0-AI",
+  "version": "1.2.0-AI",
   "description": "基于AI大模型的智能玄学助手：八字分析、易经占卜、运势预测。仅供娱乐参考。",
   "author": "K哥",
   "tags": ["玄学", "八字", "易经", "占卜", "运势", "AI生成", "娱乐", "中国文化"],
