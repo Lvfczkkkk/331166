@@ -1,4 +1,4 @@
-# Mystic Master (玄学大狮) 🧙‍♂️
+# FateClaw (玄学大狮) 🧙‍♂️
 
 _AI-Powered Chinese Divination & Destiny Analysis_
 

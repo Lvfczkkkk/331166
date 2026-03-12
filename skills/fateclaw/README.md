@@ -1,4 +1,4 @@
-# Mystic Master (玄学大狮) 🧙‍♂️
+# FateClaw (玄学大狮) 🧙‍♂️
 
 > 知命不认命，AI 伴你行
 
